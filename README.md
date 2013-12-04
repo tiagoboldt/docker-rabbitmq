@@ -1,6 +1,10 @@
 Docker setup for Apache Cassandra
 =================================
 
+This work was forked from: https://github.com/nicolasff/docker-cassandra 
+
+Initial development, no changes to install rabbitmq have been made yet.
+
 This repository contains a set of scripts and configuration files to run a Cassandra cluster
 from [Docker](https://www.docker.io/) containers. The current version of this repository is
 configured to create a Cassandra 1.2 or 2.0 image and cluster.
