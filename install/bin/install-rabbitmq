@@ -1,0 +1,36 @@
+#!/bin/bash
+
+VERSION=$1
+
+echo "deb http://www.rabbitmq.com/debian/ testing main" >> /etc/apt/sources.list
+apt-get install -y wget
+wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc -O /tmp/rabbitmq-signing-key-public.asc
+apt-key add /tmp/rabbitmq-signing-key-public.asc
+apt-get -y update
+
+# Docker work around for upstart: [https://github.com/dotcloud/docker/issues/1024]
+dpkg-divert --local --rename --add /sbin/initctl
+ln -s /bin/true /sbin/initctl
+
+apt-get install -y rabbitmq-server
+echo "if3uh874fhwiu" > /var/lib/rabbitmq/.erlang.cookie
+rabbitmq-plugins enable rabbitmq_management
+
+echo "[{rabbit, 
+	[{cluster_nodes, 
+		{[
+			'rabbit@rabbit1', 
+			'rabbit@rabbit2', 
+			'rabbit@rabbit3'
+		], ram}
+	}]
+}]." >> /etc/rabbitmq/rabbitmq.config
+
+# Configure
+# CONFIG=/root/apache-cassandra/conf/cassandra.yaml
+# ENV=/root/apache-cassandra/conf/cassandra-env.sh
+# sed -i -e "s/^# num_tokens.*/num_tokens: 256/"      $CONFIG
+# sed -i -e "s/^listen_address.*/listen_address: /"   $CONFIG
+# sed -i -e "s/^rpc_address.*/rpc_address: 0.0.0.0/"  $CONFIG
+# sed -i -e 's/seeds: "127.0.0.1"/seeds: "cass1"/g' $CONFIG
+# sed -i -e "s/Xss180k/Xss300k/g" $ENV

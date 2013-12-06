@@ -5,7 +5,7 @@ source install/common.sh
 check_usage $# 1 "Usage: $0 <VERSION>"
 
 VERSION=$1
-IMAGE=cassandra:$VERSION
+IMAGE=rabbitmq:$VERSION
 
 test_image $VERSION
 
