@@ -12,7 +12,7 @@ apt-get -y update
 dpkg-divert --local --rename --add /sbin/initctl
 ln -s /bin/true /sbin/initctl
 
-apt-get install -y rabbitmq-server
+apt-get install -y rabbitmq-server openssh-server
 
 # Enable management
 rabbitmq-plugins enable rabbitmq_management
