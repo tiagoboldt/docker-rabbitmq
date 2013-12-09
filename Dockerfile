@@ -1,22 +1,15 @@
-FROM ubuntu
+FROM ubuntu:latest
 
-RUN echo "deb http://www.rabbitmq.com/debian/ testing main" >> /etc/apt/sources.list
-RUN apt-get install -y wget
-RUN wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc -O /tmp/rabbitmq-signing-key-public.asc
-RUN apt-key add /tmp/rabbitmq-signing-key-public.asc
-RUN apt-get -y update
+ADD install/bin/install-rabbitmq /usr/bin/install-rabbitmq
+RUN /usr/bin/install-rabbitmq
 
-# Docker work around for upstart: [https://github.com/dotcloud/docker/issues/1024]
-RUN dpkg-divert --local --rename --add /sbin/initctl
-RUN ln -s /bin/true /sbin/initctl
-
-RUN apt-get install -y rabbitmq-server
-RUN rabbitmq-plugins enable rabbitmq_management
+# Install start scripts and hosts file
+ADD install/bin/pipework /usr/bin/
+ADD install/bin/start-rabbitmq /usr/bin/
+ADD install/bin/run-command /usr/bin/
 
 # For RabbitMQ
 EXPOSE 5672
 
 # For RabbitMQ Admin
-EXPOSE 15672
-
-ENTRYPOINT ["/usr/sbin/rabbitmq-server"]
+# EXPOSE 15672

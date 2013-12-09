@@ -2,12 +2,11 @@
 
 source install/common.sh
 
-check_usage $# 1 "Usage: $0 <VERSION>"
+check_usage $# 0 "Usage: $0"
 
-VERSION=$1
-IMAGE=rabbitmq:$VERSION
+IMAGE=rabbitmq:cluster_test
 
-test_image $VERSION
+test_image $IMAGE
 
 if sudo docker ps | grep $IMAGE >/dev/null; then
 	cids=$(sudo docker ps | grep $IMAGE | awk '{ print $1 }')

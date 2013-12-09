@@ -3,5 +3,6 @@
 pipework --wait
 dnsmasq
 
-export PATH=$PATH:/root/apache-cassandra/bin
+# no need to add other stuff to path
+# export PATH=$PATH:/root/apache-cassandra/bin
 $@

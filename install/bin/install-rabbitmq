@@ -13,8 +13,12 @@ dpkg-divert --local --rename --add /sbin/initctl
 ln -s /bin/true /sbin/initctl
 
 apt-get install -y rabbitmq-server
-echo "if3uh874fhwiu" > /var/lib/rabbitmq/.erlang.cookie
+
+# Enable management
 rabbitmq-plugins enable rabbitmq_management
+
+# Set a common erlang cookie
+echo "if3uh874fhwiu" > /var/lib/rabbitmq/.erlang.cookie
 
 echo "[{rabbit, 
 	[{cluster_nodes, 

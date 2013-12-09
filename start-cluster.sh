@@ -2,13 +2,13 @@
 
 source install/common.sh
 
-check_usage $# 2 "Usage: $0 <VERSION> <NUMBER OF NODES>"
+check_usage $# 1 "Usage: $0 <NUMBER OF NODES>"
 
-VERSION=$1
-NODES=$2
+IMAGE=rabbitmq:cluster_test
+NODES=$1
 BRIDGE=br1
 
-test_image $VERSION
+test_image $IMAGE
 
 for id in $(seq 1 $NODES); do
 
@@ -17,15 +17,15 @@ for id in $(seq 1 $NODES); do
 	ip=192.168.100.$id
 
 	# start container
-	# if [[ $id == 1 ]]; then
-	# 	ports="-p 127.0.0.1:19160:9160 -p 127.0.0.1:19042:9042"
-	# else
-	# 	ports=""
-	# fi
-	cid=$(sudo docker run -d -dns 127.0.0.1 -h $hostname $ports -t rabbitmq:$VERSION)
+	if [[ $id == 1 ]]; then
+		ports="-p 127.0.0.1:15672:15672 -p 127.0.0.1:5672:5672"
+	else
+		ports=""
+	fi
+	cid=$(sudo docker run -d -dns 127.0.0.1 -h $hostname $ports -t $IMAGE /usr/bin/start-rabbitmq)
 
 	# Add network interface
-	sleep 1
-	sudo pipework $BRIDGE $cid $ip/24
+	# sleep 1
+	# sudo pipework $BRIDGE $cid $ip/24
 
 done
