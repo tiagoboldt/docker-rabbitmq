@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pipework --wait
+# pipework --wait
 dnsmasq
 
 # no need to add other stuff to path
