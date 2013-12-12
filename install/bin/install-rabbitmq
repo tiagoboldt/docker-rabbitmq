@@ -1,40 +1,43 @@
 #!/bin/bash
 
-VERSION=$1
-
-echo "deb http://www.rabbitmq.com/debian/ testing main" >> /etc/apt/sources.list
 apt-get install -y wget
 wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc -O /tmp/rabbitmq-signing-key-public.asc
 apt-key add /tmp/rabbitmq-signing-key-public.asc
+echo "
+deb mirror://mirrors.ubuntu.com/mirrors.txt precise main universe
+#deb mirror://mirrors.ubuntu.com/mirrors.txt precise-updates main universe
+#deb mirror://mirrors.ubuntu.com/mirrors.txt precise-security main universe
+deb http://www.rabbitmq.com/debian/ testing main
+" > /etc/apt/sources.list
 apt-get -y update
-
 # Docker work around for upstart: [https://github.com/dotcloud/docker/issues/1024]
 dpkg-divert --local --rename --add /sbin/initctl
 ln -s /bin/true /sbin/initctl
 
-apt-get install -y rabbitmq-server openssh-server dnsmasq-base
-
-# Enable management
-rabbitmq-plugins enable rabbitmq_management
+apt-get install -y rabbitmq-server dnsmasq
 
 # Set a common erlang cookie
 echo "if3uh874fhwiu" > /var/lib/rabbitmq/.erlang.cookie
 
-echo "[{rabbit, 
+
+echo "[
+{rabbit, 
 	[{cluster_nodes, 
 		{[
 			'rabbit@rabbit1', 
 			'rabbit@rabbit2', 
-			'rabbit@rabbit3'
+			'rabbit@rabbit3',
+			'rabbit@rabbit4'
 		], ram}
 	}]
 }]." >> /etc/rabbitmq/rabbitmq.config
 
-# Configure
-# CONFIG=/root/apache-cassandra/conf/cassandra.yaml
-# ENV=/root/apache-cassandra/conf/cassandra-env.sh
-# sed -i -e "s/^# num_tokens.*/num_tokens: 256/"      $CONFIG
-# sed -i -e "s/^listen_address.*/listen_address: /"   $CONFIG
-# sed -i -e "s/^rpc_address.*/rpc_address: 0.0.0.0/"  $CONFIG
-# sed -i -e 's/seeds: "127.0.0.1"/seeds: "cass1"/g' $CONFIG
-# sed -i -e "s/Xss180k/Xss300k/g" $ENV
+# echo "SERVER_ERL_ARGS=\"+K true +A30 +P 1048576 \
+# -kernel inet_default_listen_options  \
+# -kernel inet_default_connect_options [{nodelay,true}] \
+# \"" > /etc/rabbitmq/rabbitmq-env.conf
+#-kernel inet_dist_listen_min 35197 \
+#-kernel inet_dist_listen_max 35198\"
+
+# Enable management
+rabbitmq-plugins enable rabbitmq_management

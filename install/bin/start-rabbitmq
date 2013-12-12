@@ -1,26 +1,20 @@
 #!/bin/bash
 
-# pipework --wait
-# dnsmasq
+function get-ip { ip addr show | grep 172 | awk '{print $2}' | sed -n 's/\/.*//p' ; }
 
-#IP=$(grep -w $(hostname) /etc/dnsmasq.d/0hosts | cut -f 3 -d / | sed -e 's/"//g')
-#CONFIG=/root/apache-cassandra/conf/cassandra.yaml
-#ENV=/root/apache-cassandra/conf/cassandra-env.sh
 
-# Change the listen address so that we can communicate with other nodes
-#sed -i -e "s/^listen_address.*/listen_address: $IP/"   $CONFIG
-#sed -i -e "s/^rpc_address.*/rpc_address: 0.0.0.0/"   $CONFIG
+echo "address=\"/`hostname`/`get-ip`\"" > /etc/dnsmasq.d/0hosts
 
-# wait 10 seconds instead of 30
-# export JVM_OPTS="-Dcassandra.ring_delay_ms=10000"
+if [ "$RABBIT1_PORT_4369_TCP_ADDR" ]; then
+	echo "address=\"/rabbit1/$RABBIT1_PORT_4369_TCP_ADDR\"" >> /etc/dnsmasq.d/0hosts
+fi
 
-# Fix JMX settings
-#sed -i -e 's/# JVM_OPTS="$JVM_OPTS -Djava.rmi.server.hostname=<public name>"/JVM_OPTS="$JVM_OPTS -Djava.rmi.server.hostname='$IP'"/g' $ENV
+echo 'listen-address=127.0.0.1' >> /etc/dnsmasq.conf
+echo 'resolv-file=/etc/resolv.dnsmasq.conf' >> /etc/dnsmasq.conf
+echo 'conf-dir=/etc/dnsmasq.d' >> /etc/dnsmasq.conf
+echo 'nameserver 8.8.8.8' >> /etc/resolv.dnsmasq.conf
+echo 'nameserver 8.8.4.4' >> /etc/resolv.dnsmasq.conf
 
-# Fix seeds list for the seed node
-#if [[ $(hostname) -eq "cass1" ]]; then
-#	sed -i -e 's/seeds: "cass1"/seeds: "192.168.100.1"/g' $CONFIG
-#fi
-
-# rabbitmq-server
-/usr/sbin/rabbitmq-server
+service dnsmasq start
+rabbitmq-server -detached
+bash
