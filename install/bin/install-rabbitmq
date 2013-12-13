@@ -32,12 +32,12 @@ echo "[
 	}]
 }]." >> /etc/rabbitmq/rabbitmq.config
 
-# echo "SERVER_ERL_ARGS=\"+K true +A30 +P 1048576 \
-# -kernel inet_default_listen_options  \
-# -kernel inet_default_connect_options [{nodelay,true}] \
-# \"" > /etc/rabbitmq/rabbitmq-env.conf
-#-kernel inet_dist_listen_min 35197 \
-#-kernel inet_dist_listen_max 35198\"
+echo "SERVER_ERL_ARGS=\"+K true +A30 +P 1048576 \
+-kernel inet_default_listen_options  \
+-kernel inet_default_connect_options [{nodelay,true}] \
+-kernel inet_dist_listen_min 35197 \
+-kernel inet_dist_listen_max 35198
+ \"" > /etc/rabbitmq/rabbitmq-env.conf
 
 # Enable management
 rabbitmq-plugins enable rabbitmq_management
