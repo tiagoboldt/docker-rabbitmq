@@ -18,20 +18,15 @@ for id in $(seq 1 $NODES); do
 
 	# start container
 	if [[ $id == 1 ]]; then
-		ports="-p 127.0.0.1:15672:15672"
+		ports="-p 15672:15672"
 	else
-		ports=""
-		last=`expr $id - 1`
-		echo "id: $id, last: $last"
-		for i in $(seq 1 $last); do
-			ports="$ports -link rabbit$i:rabbit$i"
-		done
+		ports=$(docker ps | grep rabbit | awk '{print $NF}' | sed "s/.*\(rabbit[0-9]*\).*/-link \1:\1/" | tr "\\n" " ")
 	fi
 	echo $ports
 	cid=$(sudo docker run -d -h $hostname -dns 127.0.0.1 -name $hostname $ports -t $IMAGE  "/usr/bin/start-rabbitmq")
 
 	# Add network interface
-	 sleep 1
+	 sleep 5
 	# sudo pipework $BRIDGE $cid $ip/24
 
 done

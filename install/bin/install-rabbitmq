@@ -39,5 +39,3 @@ echo "SERVER_ERL_ARGS=\"+K true +A30 +P 1048576 \
 -kernel inet_dist_listen_max 35198
  \"" > /etc/rabbitmq/rabbitmq-env.conf
 
-# Enable management
-rabbitmq-plugins enable rabbitmq_management

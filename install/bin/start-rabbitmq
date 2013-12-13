@@ -2,15 +2,18 @@
 
 function get-ip { ip addr show | grep 172 | awk '{print $2}' | sed -n 's/\/.*//p' ; }
 
-
 echo "address=\"/`hostname`/`get-ip`\"" > /etc/dnsmasq.d/0hosts
 
-env | grep 4369_TCP_ADDR | sed 's/RABBIT\([0-9]\)_.*=\(.*\)/address="\/rabbit\1\/\2"/' >> /etc/dnsmasq.d/0hosts
+env | grep 4369_TCP_ADDR | sed 's/RABBIT\([0-9]*\)_.*=\(.*\)/address="\/rabbit\1\/\2"/' >> /etc/dnsmasq.d/0hosts
 echo 'listen-address=127.0.0.1' >> /etc/dnsmasq.conf
 echo 'resolv-file=/etc/resolv.dnsmasq.conf' >> /etc/dnsmasq.conf
 echo 'conf-dir=/etc/dnsmasq.d' >> /etc/dnsmasq.conf
 echo 'nameserver 8.8.8.8' >> /etc/resolv.dnsmasq.conf
 echo 'nameserver 8.8.4.4' >> /etc/resolv.dnsmasq.conf
+
+if [[`hostname` == "rabbit1]] then
+	
+fi
 
 service dnsmasq start
 rabbitmq-server
