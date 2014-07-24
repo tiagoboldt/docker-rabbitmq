@@ -26,7 +26,7 @@ for id in $(seq 1 $NODES); do
 	cid=$(docker run -d -h $hostname --dns 127.0.0.1 --name $hostname $ports -t $IMAGE  "/usr/bin/start-rabbitmq")
 
 	# Add network interface
-	 sleep 5
+	sleep 5
 	# sudo pipework $BRIDGE $cid $ip/24
 
 done
