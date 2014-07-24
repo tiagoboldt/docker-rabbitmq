@@ -8,9 +8,9 @@ IMAGE=rabbitmq:cluster_test
 
 test_image $IMAGE
 
-if sudo docker ps -a | grep $IMAGE >/dev/null; then
-	cids=$(sudo docker ps -a | grep $IMAGE | awk '{ print $1 }')
+if docker ps -a | grep $IMAGE >/dev/null; then
+	cids=$(docker ps -a | grep $IMAGE | awk '{ print $1 }')
 	echo $cids | xargs echo "Killing and removing containers"
-	sudo docker kill $cids > /dev/null
-	sudo docker rm $cids   > /dev/null
+	docker kill $cids > /dev/null
+	docker rm $cids   > /dev/null
 fi

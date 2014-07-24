@@ -8,12 +8,15 @@ env | grep 4369_TCP_ADDR | sed 's/RABBIT\([0-9]*\)_.*=\(.*\)/address="\/rabbit\1
 echo 'listen-address=127.0.0.1' >> /etc/dnsmasq.conf
 echo 'resolv-file=/etc/resolv.dnsmasq.conf' >> /etc/dnsmasq.conf
 echo 'conf-dir=/etc/dnsmasq.d' >> /etc/dnsmasq.conf
+echo 'user=root' >> /etc/dnsmasq.conf
 echo 'nameserver 8.8.8.8' >> /etc/resolv.dnsmasq.conf
 echo 'nameserver 8.8.4.4' >> /etc/resolv.dnsmasq.conf
 
-if [[`hostname` == "rabbit1]] then
-	
-fi
+
+# if [[`hostname` == "rabbit1"]] then
+	rabbitmq-plugins enable rabbitmq_management
+# fi
 
 service dnsmasq start
+sleep 1
 rabbitmq-server
